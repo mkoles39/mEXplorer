@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TablacusExplorer>
+  <General>
+    <Version>1.00</Version>
+    <MinVersion>2021.1.1</MinVersion>
+    <pubDate>Fri, 16 Oct 2026 13:35:00 GMT</pubDate>
+    <Creator>Antigravity</Creator>
+  </General>
+  <en>
+    <Name>Modern Workspace &amp; Status Bar</Name>
+    <Description>Modern Windows 11 UI enhancements, Dark Mode toggle, Dual-Pane (F6) switcher, Preview toggle, Excel Table Copy, Dated Folder creator, PowerShell launcher, and Rich Status Bar with disk capacity.</Description>
+  </en>
+  <tr_tr>
+    <Name>Modern Çalışma Alanı ve Durum Çubuğu</Name>
+    <Description>Modern Windows 11 arayüz araçları, Koyu Tema seçici, Çift Panel (F6), Önizleme aç/kapat, Excel Tablo Kopyalama, Tarihli Klasör, PowerShell ve Disk Kapasiteli Durum Çubuğu.</Description>
+  </tr_tr>
+</TablacusExplorer>
