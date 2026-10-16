@@ -319,20 +319,25 @@ Extract = async function (Src, Dest, xhr) {
 CheckUpdate2 = async function (xhr, url, arg1) {
 	const arg = await api.CreateObject("Object");
 	const Text = await xhr.get_responseText ? await xhr.get_responseText() : xhr.responseText;
-	let json = JSON.parse(Text);
-	if (json.length) {
+	let json = {};
+	try {
+		json = JSON.parse(Text);
+	} catch (e) { }
+	if (json && json.length) {
 		json = json[0];
 	}
-	if (json.assets && json.assets[0]) {
+	if (json && json.assets && json.assets[0]) {
 		arg.size = json.assets[0].size / 1024;
 		arg.url = json.assets[0].browser_download_url;
 	}
-	if (!await arg.url) {
-		return;
+	let ver = 0;
+	if (await arg.url) {
+		arg.file = GetFileName((await arg.url).replace(/\//g, "\\"));
+		ver = (res = /(\d+)/.exec(await arg.file)) ? GetNum(res[1]) + 2e7 : 0;
+	} else if (json && json.tag_name) {
+		ver = (res = /(\d+)/.exec(json.tag_name.replace(/\./g, ""))) ? GetNum(res[1]) + 2e7 : 0;
 	}
-	arg.file = GetFileName((await arg.url).replace(/\//g, "\\"));
-	const ver = (res = /(\d+)/.exec(await arg.file)) ? GetNum(res[1]) + 2e7 : 0;
-	if (ver <= await AboutTE(0)) {
+	if (!await arg.url || ver <= await AboutTE(0)) {
 		let bUpdate = arg1 && GetNum(await arg1.silent);
 		if (!bUpdate) {
 			const res = /^(.*) (\d.*)/i.exec(await AboutTE(2));
@@ -343,6 +348,9 @@ CheckUpdate2 = async function (xhr, url, arg1) {
 				MainWindow.RunEvent1("CheckUpdate", arg1);
 				return;
 			}
+		}
+		if (!await arg.url) {
+			return;
 		}
 	}
 	if (!(arg1 && GetNum(await arg1.noconfirm))) {
@@ -360,7 +368,7 @@ CheckUpdate2 = async function (xhr, url, arg1) {
 	arg.zipfile = BuildPath(temp, await arg.file);
 	arg.temp = BuildPath(temp, "explorer");
 	await CreateFolder(await arg.temp);
-	OpenHttpRequest(await arg.url, "http://tablacus.github.io/TablacusExplorerAddons/te/" + ((await arg.url).replace(/^.*\//, "")), "CheckUpdate3", arg);
+	OpenHttpRequest(await arg.url, await arg.url, "CheckUpdate3", arg);
 }
 
 CheckUpdate3 = async function (xhr, url, arg) {

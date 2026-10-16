@@ -3479,9 +3479,9 @@ AddEnv("TE_Config", function (Ctrl) {
 });
 
 CreateUpdater = function (arg) {
-	let te_new = BuildPath(arg.temp, "te64.exe");
+	let te_new = BuildPath(arg.temp, "mEXplorer.exe");
 	let nDog = 300;
-	while (!api.PathFileExists(te_new)) {
+	while (!api.PathFileExists(te_new) && !api.PathFileExists(BuildPath(arg.temp, "te64.exe"))) {
 		if (wsh.Popup(GetText("Please wait."), 1, TITLE, MB_OKCANCEL) == IDCANCEL || nDog-- == 0) {
 			return;
 		}

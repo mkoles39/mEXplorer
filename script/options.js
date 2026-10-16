@@ -2016,16 +2016,13 @@ InitDialog = async function () {
 		s.push('&nbsp;<button onclick="Run(3)">Check for updates</button>');
 		s.push('</td></tr></table>');
 		document.getElementById("Content").innerHTML = s.join("");
-		let website = "https://tablacus.github.io/explorer_en.html";
+		let website = "https://github.com/mkoles39/mEXplorer";
 		if (r.length) {
 			Promise.all(r).then(async function (r) {
 				document.getElementById("img1").src = r[0];
 				document.getElementById("about2").innerHTML = r[1];
 				document.getElementById("bit1").innerHTML = r[2];
 				document.getElementById("about3").value = r[4];
-				if (/^ja/i.test(r[5])) {
-					website = website.replace("_en", "");
-				}
 				document.getElementById("ws1").title = website;
 
 				const el = document.getElementById("df1");
