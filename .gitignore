@@ -1,0 +1,5 @@
+# User session history & local window state
+config/remember.xml
+config/closedtabs.xml
+config/window1.xml
+config/*.bak
