@@ -218,4 +218,7 @@
 	<text s="Open folders and drives with mEXplorer by default in Windows.">Windows'ta klasör ve sürücülere çift tıklandığında varsayılan olarak mEXplorer ile açılır.</text>
 	<text s="Dark mode">Koyu tema (Dark Mode)</text>
 	<text s="Open mEXplorer with Win+E shortcut">Win + E klavye kısayolunu mEXplorer ile aç</text>
+	<text s="Application &amp; Folder Icon">Uygulama ve Klasör İkonu</text>
+	<text s="Apply selected icon to Windows folders">Seçili ikonu Windows / Masaüstü klasörlerine uygula</text>
+	<text s="Restore default Windows folder icon">Windows klasör ikonlarını varsayılana döndür</text>
 </resources>

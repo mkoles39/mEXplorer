@@ -109,6 +109,31 @@
               </div>
               <br>
               <div class="block">
+                <label style="font-weight: bold">Application &amp; Folder Icon</label>
+                <input type="text" name="Conf_AppIcon" style="display: none">
+                <div style="display: flex; gap: 14px; margin: 8px 0; flex-wrap: wrap;">
+                  <label style="display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    <img src="../icons/icon1.png" style="width: 44px; height: 44px; margin-bottom: 4px;">
+                    <span><input type="radio" name="Conf_AppIcon_" id="Conf_AppIcon=1" onclick="SelectAppIcon(1)" checked> 1. Fluent Blue</span>
+                  </label>
+                  <label style="display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    <img src="../icons/icon2.png" style="width: 44px; height: 44px; margin-bottom: 4px;">
+                    <span><input type="radio" name="Conf_AppIcon_" id="Conf_AppIcon=2" onclick="SelectAppIcon(2)"> 2. Obsidian Gold</span>
+                  </label>
+                  <label style="display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    <img src="../icons/icon3.png" style="width: 44px; height: 44px; margin-bottom: 4px;">
+                    <span><input type="radio" name="Conf_AppIcon_" id="Conf_AppIcon=3" onclick="SelectAppIcon(3)"> 3. Neon Cyber</span>
+                  </label>
+                  <label style="display: flex; flex-direction: column; align-items: center; cursor: pointer; padding: 6px 10px; border: 1px solid #cbd5e1; border-radius: 8px;">
+                    <img src="../icons/icon4.png" style="width: 44px; height: 44px; margin-bottom: 4px;">
+                    <span><input type="radio" name="Conf_AppIcon_" id="Conf_AppIcon=4" onclick="SelectAppIcon(4)"> 4. Emerald Pro</span>
+                  </label>
+                </div>
+                <button onclick="ApplyWindowsFolderIcon(true);">Apply selected icon to Windows folders</button>
+                <button onclick="ApplyWindowsFolderIcon(false);">Restore default Windows folder icon</button>
+              </div>
+              <br>
+              <div class="block">
                 <button name="ButtonInitConfig" onclick="InitConfig(this);">Initialize config folder</button>
                 <br>
                 <label>If you installed mEXplorer to the Program Files directory, please press this button.</label>
