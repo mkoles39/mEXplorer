@@ -315,6 +315,19 @@ if (window.Addon == 1) {
 			} catch (e) { }
 		},
 
+		OpenIconMenu: async function () {
+			if (await $.Sync && await $.Sync.ModernWorkspace) {
+				const res = await $.Sync.ModernWorkspace.ShowIconMenu();
+				if (res >= 1 && res <= 4) {
+					Addons.ModernWorkspace.FlashMessage("🎨 Uygulama ikonu #" + res + " olarak değiştirildi");
+				} else if (res == 10) {
+					Addons.ModernWorkspace.FlashMessage("📁 Masaüstü ve Windows klasör ikonları güncellendi");
+				} else if (res == 11) {
+					Addons.ModernWorkspace.FlashMessage("📁 Windows klasör ikonları varsayılana döndürüldü");
+				}
+			}
+		},
+
 		ScheduleStatus: function () {
 			if (Addons.ModernWorkspace.tidStatus) {
 				clearTimeout(Addons.ModernWorkspace.tidStatus);
@@ -331,6 +344,7 @@ if (window.Addon == 1) {
 			'<span id="mw_btn_copytable" class="mw-btn" onclick="Addons.ModernWorkspace.CopyAsTable()" title="Seçili dosyaları Excel tablosu olarak panoya kopyala">📋 Tablo Kopyala</span>',
 			'<span id="mw_btn_datefolder" class="mw-btn" onclick="Addons.ModernWorkspace.CreateDatedFolder()" title="Bugünün tarihiyle (YYYY-AA-GG) yeni klasör oluştur">📅 Tarihli Klasör</span>',
 			'<span id="mw_btn_terminal" class="mw-btn" onclick="Addons.ModernWorkspace.OpenTerminal()" title="Bulunulan klasörde PowerShell aç">💻 Terminal</span>',
+			'<span id="mw_btn_icon" class="mw-btn" onclick="Addons.ModernWorkspace.OpenIconMenu()" title="Uygulama ve Klasör İkonunu Seç">🎨 İkon</span>',
 			'<span id="mw_btn_theme" class="mw-btn" onclick="Addons.ModernWorkspace.ToggleTheme()" title="Açık / Koyu Tema Değiştir">🌙 Koyu</span>',
 			'</span>'
 		].join("");

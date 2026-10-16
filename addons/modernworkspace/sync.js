@@ -25,7 +25,86 @@ Sync.ModernWorkspace = {
 			Sync.ModernWorkspace.clrLine = GetSysColor(COLOR_WINDOWTEXT);
 			te.Data.View_ViewFlags &= ~8;
 		}
+		Sync.ModernWorkspace.ApplyAppIcon(GetNum(te.Data.Conf_AppIcon) || 1, false);
 		Sync.ModernWorkspace.Refresh();
+	},
+
+	ApplyAppIcon: function (nIcon, bRunScript, bFolderIcons, bRestoreFolders) {
+		nIcon = GetNum(nIcon) || 1;
+		if (nIcon < 1 || nIcon > 4) {
+			nIcon = 1;
+		}
+		te.Data.Conf_AppIcon = nIcon;
+		const icoPath = BuildPath(te.Data.Installed, "icons\\icon" + nIcon + ".ico");
+		if (api.PathFileExists(icoPath)) {
+			try {
+				const hBig = api.LoadImage(0, icoPath, IMAGE_ICON, 48, 48, LR_LOADFROMFILE);
+				const hSmall = api.LoadImage(0, icoPath, IMAGE_ICON, 16, 16, LR_LOADFROMFILE);
+				if (hBig) {
+					api.SendMessage(te.hwnd, 0x0080, 1, hBig);
+					try { api.SetClassLongPtr(te.hwnd, -14, hBig); } catch (e) { }
+				}
+				if (hSmall) {
+					api.SendMessage(te.hwnd, 0x0080, 0, hSmall);
+					try { api.SetClassLongPtr(te.hwnd, -34, hSmall); } catch (e) { }
+				}
+			} catch (e) { }
+		}
+		if (bRunScript) {
+			const ps1 = BuildPath(te.Data.Installed, "icons\\apply_exe_icon.ps1");
+			if (api.PathFileExists(ps1)) {
+				let args = '-ExecutionPolicy Bypass -WindowStyle Hidden -File "' + ps1 + '" -IconIndex ' + nIcon;
+				if (bFolderIcons) {
+					args += " -ApplyFolderIcons";
+				} else if (bRestoreFolders) {
+					args += " -RestoreFolderIcons";
+				}
+				try {
+					wsh.Run("powershell.exe " + args, 0, false);
+				} catch (e) { }
+			}
+		}
+	},
+
+	ShowIconMenu: function () {
+		const curIcon = GetNum(te.Data.Conf_AppIcon) || 1;
+		let isFolderCustom = false;
+		try {
+			const defIcon = wsh.RegRead("HKCU\\Software\\Classes\\Directory\\DefaultIcon\\");
+			isFolderCustom = /icon\d\.ico/i.test(defIcon);
+		} catch (e) { }
+
+		const hMenu = api.CreatePopupMenu();
+		const names = [
+			"1. Fluent Electric Blue 'm' (Varsayılan)",
+			"2. Dark Obsidian & Gold (mX)",
+			"3. Neon Cyber Gradient",
+			"4. Minimalist Emerald Pro"
+		];
+		for (let i = 0; i < names.length; ++i) {
+			const id = i + 1;
+			api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING | (curIcon == id ? MF_CHECKED : 0), id, names[i]);
+		}
+		api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_SEPARATOR, 0, null);
+		api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING | (isFolderCustom ? MF_CHECKED : 0), 10, "Masaüstü / Windows Klasör İkonlarına da Uygula");
+		api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING, 11, "Windows Klasör İkonlarını Varsayılana Döndür");
+
+		const pt = api.Memory("POINT");
+		api.GetCursorPos(pt);
+		const nVerb = api.TrackPopupMenuEx(hMenu, TPM_LEFTALIGN | TPM_LEFTBUTTON | TPM_RIGHTBUTTON | TPM_RETURNCMD, pt.x, pt.y, te.hwnd, null, null);
+		api.DestroyMenu(hMenu);
+
+		if (nVerb >= 1 && nVerb <= 4) {
+			Sync.ModernWorkspace.ApplyAppIcon(nVerb, true, isFolderCustom, false);
+			return nVerb;
+		} else if (nVerb == 10) {
+			Sync.ModernWorkspace.ApplyAppIcon(curIcon, true, true, false);
+			return 10;
+		} else if (nVerb == 11) {
+			Sync.ModernWorkspace.ApplyAppIcon(curIcon, true, false, true);
+			return 11;
+		}
+		return 0;
 	},
 
 	SetTheme: function (bDark) {

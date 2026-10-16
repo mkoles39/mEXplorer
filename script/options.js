@@ -591,6 +591,30 @@ async function SetDefaultExplorer(bSet) {
 	}
 }
 
+async function SelectAppIcon(nIcon) {
+	const radio = document.getElementById("Conf_AppIcon=" + nIcon);
+	if (radio) {
+		SetRadio(radio);
+	}
+	try {
+		if (await MainWindow.Sync && await MainWindow.Sync.ModernWorkspace) {
+			await MainWindow.Sync.ModernWorkspace.ApplyAppIcon(nIcon, true, false, false);
+		}
+	} catch (e) { }
+}
+
+async function ApplyWindowsFolderIcon(bApply) {
+	const curIcon = GetNum(document.F.Conf_AppIcon.value) || 1;
+	try {
+		if (await MainWindow.Sync && await MainWindow.Sync.ModernWorkspace) {
+			await MainWindow.Sync.ModernWorkspace.ApplyAppIcon(curIcon, true, bApply, !bApply);
+		}
+		await MessageBox("Completed.", TITLE, MB_OK);
+	} catch (e) {
+		ShowError(e);
+	}
+}
+
 function SelectPos(o, s) {
 	const v = o[o.selectedIndex].value;
 	if (v != "") {
