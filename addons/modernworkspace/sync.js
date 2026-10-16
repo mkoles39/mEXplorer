@@ -59,8 +59,8 @@ Sync.ModernWorkspace = {
 		if (!hwndParent) {
 			return;
 		}
-		const themeExp = bDark ? "DarkMode_Explorer" : "Explorer";
-		const themeItems = bDark ? "DarkMode_ItemsView" : "ItemsView";
+		const themeExp = bDark ? "darkmode_explorer" : "explorer";
+		const themeItems = bDark ? "darkmode_itemsview" : "itemsview";
 		let hChild = 0;
 		while (hChild = api.FindWindowEx(hwndParent, hChild, null, null)) {
 			const cls = api.GetClassName(hChild);
@@ -80,8 +80,8 @@ Sync.ModernWorkspace = {
 
 	SetColor: function (FV, hwnd) {
 		const bDark = Sync.ModernWorkspace.bDark;
-		const themeExp = bDark ? "DarkMode_Explorer" : "Explorer";
-		const themeItems = bDark ? "DarkMode_ItemsView" : "ItemsView";
+		const themeExp = bDark ? "darkmode_explorer" : "explorer";
+		const themeItems = bDark ? "darkmode_itemsview" : "itemsview";
 
 		if (bDark) {
 			FV.ViewFlags |= 8;
@@ -93,6 +93,11 @@ Sync.ModernWorkspace = {
 		api.SendMessage(hwnd, LVM_SETBKCOLOR, 0, Sync.ModernWorkspace.clrBk);
 		api.SendMessage(hwnd, LVM_SETTEXTBKCOLOR, 0, Sync.ModernWorkspace.clrBk);
 
+		api.SetWindowTheme(hwnd, themeExp, null);
+		if (Sync.ModernWorkspace.lastTitleDark !== bDark) {
+			Sync.ModernWorkspace.lastTitleDark = bDark;
+			api.SendMessage(te.hwnd, 0x001A, 0, 0);
+		}
 		Sync.ModernWorkspace.ApplyThemeWindow(hwnd, themeExp);
 		if (FV.hwndView) {
 			Sync.ModernWorkspace.ApplyThemeWindow(FV.hwndView, themeExp);
@@ -122,7 +127,7 @@ Sync.ModernWorkspace = {
 	SetTV: function (hwnd) {
 		if (hwnd) {
 			const bDark = Sync.ModernWorkspace.bDark;
-			const themeExp = bDark ? "DarkMode_Explorer" : "Explorer";
+			const themeExp = bDark ? "darkmode_explorer" : "explorer";
 			api.SendMessage(hwnd, TVM_SETTEXTCOLOR, 0, Sync.ModernWorkspace.clrText);
 			api.SendMessage(hwnd, TVM_SETBKCOLOR, 0, Sync.ModernWorkspace.clrBk);
 			api.SendMessage(hwnd, TVM_SETLINECOLOR, 0, Sync.ModernWorkspace.clrLine);

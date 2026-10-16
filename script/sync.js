@@ -54,7 +54,7 @@ g_.DefaultIcons = {
 	general: "bitmap:ieframe.dll,214,24,",
 	browser: "bitmap:ieframe.dll,204,24,"
 }
-g_.updateJSONURL = "https://api.github.com/repos/tablacus/TablacusExplorer/releases/latest";
+g_.updateJSONURL = "https://api.github.com/repos/mkoles39/mEXplorer/releases/latest";
 g_.IconChg = [
 	["bitmap:ieframe.dll,206,16,", "bitmap:ExplorerFrame.dll,264,16,", 16, "browser"],
 	["bitmap:ieframe.dll,204,24,", "bitmap:ExplorerFrame.dll,264,16,", 16, "browser"],
@@ -78,7 +78,7 @@ AboutTE = function (n) {
 	if (n == 2) {
 		return "mEXplorer " + AboutTE(1);
 	}
-	const ar = ["TE" + g_.bit, AboutTE(1)];
+	const ar = ["mEXplorer " + g_.bit + "-bit", AboutTE(1)];
 	let s = "HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\";
 	try {
 		s = wsh.regRead(s + "DisplayVersion") || wsh.regRead(s + "ReleaseId");
@@ -882,7 +882,7 @@ GetIconPacks = function () {
 }
 
 CheckUpdate = function (arg) {
-	OpenHttpRequest(g_.updateJSONURL, "http://tablacus.github.io/TablacusExplorerAddons/te/releases.json", "CheckUpdate2", arg);
+	OpenHttpRequest(g_.updateJSONURL, "https://api.github.com/repos/mkoles39/mEXplorer/releases", "CheckUpdate2", arg);
 }
 
 ShowAbout = function () {
