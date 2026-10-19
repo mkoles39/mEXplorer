@@ -1,9 +1,9 @@
 const Addon_Id = "treeview";
 const Default = "ToolBar2Left";
 const item = await GetAddonElement(Addon_Id);
-if (!item.getAttribute("Set")) {
-	item.setAttribute("MenuPos", -1);
-	item.setAttribute("List", 1);
+if (!await item.getAttribute("Set")) {
+	await item.setAttribute("MenuPos", -1);
+	await item.setAttribute("List", 1);
 }
 if (window.Addon == 1) {
 	Addons.TreeView = {

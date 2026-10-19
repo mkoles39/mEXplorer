@@ -3,10 +3,45 @@ const item = GetAddonElement(Addon_Id);
 
 Sync.TreeView = {
 	strName: "Tree",
-	List: item.getAttribute("List"),
+	List: GetNum(item.getAttribute("List"), 1),
 	nPos: 0,
 	Depth: GetNum(item.getAttribute("Depth")),
 	Collapse: GetNum(item.getAttribute("Collapse")),
+	tmClick: 0,
+
+	OpenItem: function (Ctrl, pt, ItemOpt) {
+		const now = new Date().getTime();
+		if (now - (Sync.TreeView.tmClick || 0) < 250) {
+			return;
+		}
+		const TV = Ctrl.Type == CTRL_TV ? Ctrl : Ctrl.TreeView;
+		if (!TV) {
+			return;
+		}
+		const Item = ItemOpt || (pt ? TV.HitTest(pt) : null);
+		if (Item) {
+			Sync.TreeView.tmClick = now;
+			const FV = TV.FolderView || te.Ctrl(CTRL_FV);
+			if (FV && !api.ILIsEqual(FV.FolderItem, Item)) {
+				let bFolder = Item.IsFolder || (!Item.IsFileSystem && Item.IsBrowsable);
+				if (!bFolder) {
+					const linkPath = Item.ExtendedProperty("linktarget");
+					if (linkPath) {
+						bFolder = api.PathIsDirectory(linkPath) === true;
+					}
+				}
+				setTimeout(function () {
+					if (bFolder) {
+						const wFlags = GetNavigateFlags(FV);
+						const targetFV = ((wFlags & SBSP_NEWBROWSER) && FV.Parent && FV.Parent.Count > 1) ? (FV.Parent[FV.Parent.Count - 1] || FV) : FV;
+						targetFV.Navigate(Item, wFlags);
+					} else {
+						FolderMenu.Invoke(Item, void 0, FV);
+					}
+				}, 40);
+			}
+		}
+	},
 
 	Exec: function (Ctrl, pt) {
 		const FV = GetFolderView(Ctrl, pt);
@@ -126,29 +161,41 @@ if (item.getAttribute("MouseExec")) {
 
 if (Sync.TreeView.List) {
 	SetGestureExec("Tree", "1", function (Ctrl, pt) {
-		const Item = Ctrl.HitTest(pt);
-		if (Item) {
-			const FV = Ctrl.FolderView;
-			if (!api.ILIsEqual(FV.FolderItem, Item) && Item.IsFolder) {
-				setTimeout(function () {
-					FV.Navigate(Item, GetNavigateFlags(FV));
-				}, 99);
-			}
-		}
+		Sync.TreeView.OpenItem(Ctrl, pt);
 		return S_OK;
 	}, "Func", true);
+
+	AddEvent("ItemClick", function (Ctrl, Item, HitTest, Flags) {
+		if (Ctrl && Ctrl.Type == CTRL_TV && (Flags & NSTCECT_BUTTON) == NSTCECT_LBUTTON && (HitTest & NSTCEHT_ONITEM)) {
+			Sync.TreeView.OpenItem(Ctrl, null, Item);
+		}
+	});
+
+	AddEvent("MouseMessage", function (Ctrl, hwnd, msg, wParam, pt) {
+		if (msg == WM_LBUTTONDOWN && api.GetClassName(hwnd) == WC_TREEVIEW) {
+			const TV = Ctrl.Type == CTRL_TV ? Ctrl : Ctrl.TreeView;
+			if (TV && TV.HitTest(pt)) {
+				const ptDown = pt.Clone();
+				const waitRelease = function (n) {
+					if (api.GetKeyState(VK_LBUTTON) < 0) {
+						if (n > 0) {
+							setTimeout(waitRelease, 25, n - 1);
+						}
+						return;
+					}
+					const ptUp = api.GetCursorPos();
+					if (!IsDrag(ptUp, ptDown)) {
+						Sync.TreeView.OpenItem(TV, ptDown);
+					}
+				};
+				setTimeout(waitRelease, 35, 60);
+			}
+		}
+	});
 }
 
 SetGestureExec("Tree", "11", function (Ctrl, pt) {
-	const Item = Ctrl.HitTest(pt);
-	if (Item) {
-		const FV = Ctrl.FolderView;
-		if (!api.ILIsEqual(FV.FolderItem, Item)) {
-			setTimeout(function () {
-				FolderMenu.Invoke(Item, void 0, FV);
-			}, 99);
-		}
-	}
+	Sync.TreeView.OpenItem(Ctrl, pt);
 	return S_OK;
 }, "Func", true);
 

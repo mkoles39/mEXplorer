@@ -155,34 +155,42 @@ try {
     [IconResUpdater]::SHChangeNotify(0x00002000, 0x0005, $lnkPath, $null)
 } catch { }
 
-# 3. Update Context Menu Icon in Registry
+# 3. Update Context Menu Icon & Command in Registry
+$cu = [Microsoft.Win32.Registry]::CurrentUser
+$exePath = Join-Path $baseDir "mEXplorer.exe"
 foreach ($t in @("Directory", "Drive")) {
-    $k = "HKCU:\Software\Classes\$t\shell\tablacus"
-    if (Test-Path $k) {
-        Set-ItemProperty -Path $k -Name "Icon" -Value "$icoPath,0"
+    $subPath = "Software\Classes\$t\shell\tablacus"
+    $rk = $cu.OpenSubKey($subPath, $true)
+    if ($rk) {
+        $rk.SetValue("Icon", "$icoPath,0")
+        $rk.Close()
+        $cmdRk = $cu.CreateSubKey("$subPath\command")
+        $cmdRk.SetValue("", ('"{0}" "%1"' -f $exePath))
+        $cmdRk.Close()
     }
 }
-$bgk = "HKCU:\Software\Classes\Directory\Background\shell\tablacus"
-if (Test-Path $bgk) {
-    Set-ItemProperty -Path $bgk -Name "Icon" -Value "$icoPath,0"
+$bgSubPath = "Software\Classes\Directory\Background\shell\tablacus"
+$bgRk = $cu.OpenSubKey($bgSubPath, $true)
+if ($bgRk) {
+    $bgRk.SetValue("Icon", "$icoPath,0")
+    $bgRk.Close()
+    $bgCmdRk = $cu.CreateSubKey("$bgSubPath\command")
+    $bgCmdRk.SetValue("", ('"{0}" "%V"' -f $exePath))
+    $bgCmdRk.Close()
 }
+$cu.DeleteSubKeyTree("Software\Classes\Folder", $false)
 
 # 4. Handle Desktop & Windows Folder Icons
 $desktopDir = [Environment]::GetFolderPath("Desktop")
 if ($ApplyFolderIcons) {
-    foreach ($cls in @("Directory", "Folder")) {
-        $diKey = "HKCU:\Software\Classes\$cls\DefaultIcon"
-        if (-not (Test-Path $diKey)) {
-            New-Item -Path $diKey -Force | Out-Null
-        }
-        Set-ItemProperty -Path $diKey -Name "(default)" -Value "$icoPath,0"
-    }
-    $siKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons"
-    if (-not (Test-Path $siKey)) {
-        New-Item -Path $siKey -Force | Out-Null
-    }
-    Set-ItemProperty -Path $siKey -Name "3" -Value "$icoPath,0"
-    Set-ItemProperty -Path $siKey -Name "4" -Value "$icoPath,0"
+    $diKey = $cu.CreateSubKey("Software\Classes\Directory\DefaultIcon")
+    $diKey.SetValue("", "$icoPath,0")
+    $diKey.Close()
+
+    $siKey = $cu.CreateSubKey("Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons")
+    $siKey.SetValue("3", "$icoPath,0")
+    $siKey.SetValue("4", "$icoPath,0")
+    $siKey.Close()
 
     if (Test-Path $desktopDir) {
         Get-ChildItem -Path $desktopDir -Directory | ForEach-Object {
@@ -190,16 +198,12 @@ if ($ApplyFolderIcons) {
         }
     }
 } elseif ($RestoreFolderIcons) {
-    foreach ($cls in @("Directory", "Folder")) {
-        $diKey = "HKCU:\Software\Classes\$cls\DefaultIcon"
-        if (Test-Path $diKey) {
-            Remove-Item -Path $diKey -Recurse -Force -ErrorAction SilentlyContinue
-        }
-    }
-    $siKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons"
-    if (Test-Path $siKey) {
-        Remove-ItemProperty -Path $siKey -Name "3" -ErrorAction SilentlyContinue
-        Remove-ItemProperty -Path $siKey -Name "4" -ErrorAction SilentlyContinue
+    $cu.DeleteSubKeyTree("Software\Classes\Directory\DefaultIcon", $false)
+    $siKey = $cu.OpenSubKey("Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Icons", $true)
+    if ($siKey) {
+        $siKey.DeleteValue("3", $false)
+        $siKey.DeleteValue("4", $false)
+        $siKey.Close()
     }
     if (Test-Path $desktopDir) {
         Get-ChildItem -Path $desktopDir -Directory | ForEach-Object {

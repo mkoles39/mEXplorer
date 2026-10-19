@@ -2524,6 +2524,22 @@ te.OnSystemMessage = function (Ctrl, hwnd, msg, wParam, lParam) {
 		}
 		if (Ctrl.Type == CTRL_TE && cd.dwData == 0 && cd.cbData) {
 			const strData = api.SysAllocStringByteLen(cd.lpData, cd.cbData, cd.cbData);
+			try {
+				const hwndFg = api.GetForegroundWindow();
+				if (hwndFg && hwndFg != te.hwnd && /^(Cabinet|Explore)WClass$/i.test(api.GetClassName(hwndFg))) {
+					const arg = api.CommandLineToArgv(strData);
+					if (arg.length == 1 && /^[A-Z]:\\|^\\\\/i.test(arg[0]) && IsExists(arg[0])) {
+						const sw = sha.Windows();
+						for (let i = 0; i < sw.Count; ++i) {
+							const x = sw.Item(i);
+							if (x && x.HWND == hwndFg) {
+								x.Navigate(arg[0]);
+								return S_OK;
+							}
+						}
+					}
+				}
+			} catch (e) {}
 			RestoreFromTray();
 			RunCommandLine(strData);
 			return S_OK;
