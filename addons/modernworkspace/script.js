@@ -341,10 +341,7 @@ if (window.Addon == 1) {
 			'<span class="mw-bar">',
 			'<span id="mw_btn_dual" class="mw-btn" onclick="Addons.ModernWorkspace.ToggleDualPane()" title="Tek Panel / Yan Yana Çift Panel (F6)">◫ Çift Panel</span>',
 			'<span id="mw_btn_preview" class="mw-btn" onclick="Addons.ModernWorkspace.TogglePreview()" title="Sağ Önizleme Panelini Aç / Kapat">👁 Önizleme</span>',
-			'<span id="mw_btn_copytable" class="mw-btn" onclick="Addons.ModernWorkspace.CopyAsTable()" title="Seçili dosyaları Excel tablosu olarak panoya kopyala">📋 Tablo Kopyala</span>',
 			'<span id="mw_btn_datefolder" class="mw-btn" onclick="Addons.ModernWorkspace.CreateDatedFolder()" title="Bugünün tarihiyle (YYYY-AA-GG) yeni klasör oluştur">📅 Tarihli Klasör</span>',
-			'<span id="mw_btn_terminal" class="mw-btn" onclick="Addons.ModernWorkspace.OpenTerminal()" title="Bulunulan klasörde PowerShell aç">💻 Terminal</span>',
-			'<span id="mw_btn_icon" class="mw-btn" onclick="Addons.ModernWorkspace.OpenIconMenu()" title="Uygulama ve Klasör İkonunu Seç">🎨 İkon</span>',
 			'<span id="mw_btn_theme" class="mw-btn" onclick="Addons.ModernWorkspace.ToggleTheme()" title="Açık / Koyu Tema Değiştir">🌙 Koyu</span>',
 			'</span>'
 		].join("");
