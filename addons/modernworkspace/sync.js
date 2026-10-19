@@ -241,23 +241,31 @@ AddEvent("Create", function (Ctrl) {
 	}
 });
 
-if (api.IsAppThemed() && WINVER > 0x603) {
-	AddEvent("Load", function () {
-		if (!Sync.ClassicStyle) {
-			AddEvent("ItemPrePaint2", function (Ctrl, pid, nmcd, vcd, plRes) {
-				if (Sync.ModernWorkspace.bDark) {
-					const uState = api.SendMessage(Ctrl.hwndList, LVM_GETITEMSTATE, nmcd.dwItemSpec, LVIS_SELECTED);
-					if (uState & LVIS_SELECTED || nmcd.uItemState & CDIS_HOT) {
-						const rc = api.Memory("RECT");
-						rc.left = LVIR_SELECTBOUNDS;
-						api.SendMessage(Ctrl.hwndList, LVM_GETITEMRECT, nmcd.dwItemSpec, rc);
-						api.SetDCBrushColor(nmcd.hdc, (uState & LVIS_SELECTED) ? 0x5c3b1e : 0x3b2818);
-						api.FillRect(nmcd.hdc, rc, api.GetStockObject(DC_BRUSH));
-					}
+AddEvent("Tools", function (Ctrl, hMenu, nPos) {
+	api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING, ++nPos, "🎨 Uygulama ve Klasör İkonu Seç...");
+	ExtraMenuCommand[nPos] = function () {
+		Sync.ModernWorkspace.ShowIconMenu();
+		return S_OK;
+	};
+	return nPos;
+});
+
+AddEvent("Load", function () {
+	Sync.ModernWorkspace.ApplyAppIcon(GetNum(te.Data.Conf_AppIcon) || 1, false);
+	if (api.IsAppThemed() && WINVER > 0x603 && !Sync.ClassicStyle) {
+		AddEvent("ItemPrePaint2", function (Ctrl, pid, nmcd, vcd, plRes) {
+			if (Sync.ModernWorkspace.bDark) {
+				const uState = api.SendMessage(Ctrl.hwndList, LVM_GETITEMSTATE, nmcd.dwItemSpec, LVIS_SELECTED);
+				if (uState & LVIS_SELECTED || nmcd.uItemState & CDIS_HOT) {
+					const rc = api.Memory("RECT");
+					rc.left = LVIR_SELECTBOUNDS;
+					api.SendMessage(Ctrl.hwndList, LVM_GETITEMRECT, nmcd.dwItemSpec, rc);
+					api.SetDCBrushColor(nmcd.hdc, (uState & LVIS_SELECTED) ? 0x5c3b1e : 0x3b2818);
+					api.FillRect(nmcd.hdc, rc, api.GetStockObject(DC_BRUSH));
 				}
-			});
-		}
-	});
-}
+			}
+		});
+	}
+});
 
 Sync.ModernWorkspace.Init();

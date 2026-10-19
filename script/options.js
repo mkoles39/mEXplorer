@@ -598,7 +598,7 @@ async function SelectAppIcon(nIcon) {
 	}
 	try {
 		if (await MainWindow.Sync && await MainWindow.Sync.ModernWorkspace) {
-			await MainWindow.Sync.ModernWorkspace.ApplyAppIcon(nIcon, true, false, false);
+			await MainWindow.Sync.ModernWorkspace.ApplyAppIcon(nIcon, true, true, false);
 		}
 	} catch (e) { }
 }
