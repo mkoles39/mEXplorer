@@ -119,8 +119,8 @@ PathUnquoteSpaces = function (s) {
 
 CreateTab = async function (Ctrl, pt) {
 	const FV = await GetFolderView(Ctrl, pt);
-	HOME_PATH = await $.HOME_PATH;
-	NavigateFV(FV, HOME_PATH || await api.ILIsEqual(FV, "about:blank") ? HOME_PATH : FV, SBSP_NEWBROWSER);
+	HOME_PATH = (await $.HOME_PATH) || "::{F874310E-B6B7-47DC-BC84-B9E6B38F5903}";
+	NavigateFV(FV, HOME_PATH, SBSP_NEWBROWSER);
 	return S_OK;
 }
 

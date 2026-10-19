@@ -1824,7 +1824,10 @@ NavigateFV = function (FV, Path, wFlags, bInputed) {
 						RunEvent1("LocationEntered", FV, Path, wFlags);
 						const r = MainWindow.RunEvent4("LocationEntered2", FV, Path, wFlags);
 						if (r === void 0) {
-							FV.Navigate(pid, wFlags);
+							FV = FV.Navigate(pid, wFlags);
+							if ((wFlags & SBSP_NEWBROWSER) && FV && FV.Parent && FV.Index < FV.Parent.Count - 1) {
+								FV.Parent.Move(FV.Index, FV.Parent.Count - 1);
+							}
 							FV.Focus();
 						}
 						return;
@@ -1849,7 +1852,10 @@ NavigateFV = function (FV, Path, wFlags, bInputed) {
 			return S_OK;
 		}
 	}
-	FV.Navigate(Path, wFlags);
+	FV = FV.Navigate(Path, wFlags);
+	if ((wFlags & SBSP_NEWBROWSER) && FV && FV.Parent && FV.Index < FV.Parent.Count - 1) {
+		FV.Parent.Move(FV.Index, FV.Parent.Count - 1);
+	}
 	FV.Focus();
 }
 
