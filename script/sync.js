@@ -3087,7 +3087,11 @@ OpenNewProcess = function (fn, ex, mode, vOperation) {
 	if (/rundll32\.?(exe)?"?$/i.test(api.CommandLineToArgv(api.GetCommandLine())[0])) {
 		ar.unshift(PathQuoteSpaces(BuildPath(ui_.Installed, "lib", "te" + ui_.bit + ".dll")) + ",RunDLL");
 	}
-	ar.unshift(PathQuoteSpaces(api.GetModuleFileName(null)));
+	let exePath = api.GetModuleFileName(null);
+	if (!api.PathFileExists(exePath)) {
+		exePath = BuildPath(te.Data.Installed, "mEXplorer.exe");
+	}
+	ar.unshift(PathQuoteSpaces(exePath));
 	return ShellExecute(ar.join(" "), vOperation, mode ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE);
 }
 
