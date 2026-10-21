@@ -1,4 +1,4 @@
-const Addon_Id = "treeview";
+﻿const Addon_Id = "treeview";
 const item = GetAddonElement(Addon_Id);
 
 Sync.TreeView = {
@@ -62,7 +62,7 @@ Sync.TreeView = {
 	},
 
 	Expand: function (Ctrl) {
-		if (Sync.TreeView.List && Ctrl.FolderItem && IsWitness(Ctrl.FolderItem)) {
+		if (GetNum(item.getAttribute("SyncTree")) && Ctrl.FolderItem && IsWitness(Ctrl.FolderItem)) {
 			const TV = Ctrl.TreeView;
 			if (TV) {
 				if (Sync.TreeView.Collapse) {
@@ -136,7 +136,7 @@ if (GetNum(item.getAttribute("Refresh"))) {
 	}, "Func", true);
 }
 
-if (Sync.TreeView.List) {
+if (GetNum(item.getAttribute("SyncTree"))) {
 	AddEvent("ChangeView", Sync.TreeView.Expand);
 }
 
