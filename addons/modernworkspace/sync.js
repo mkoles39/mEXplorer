@@ -4,6 +4,11 @@ Sync.ModernWorkspace = {
 	clrBk: 0x221712,
 	clrLine: 0x475569,
 	clrBtnFace: 0x2b1e15,
+	themed: {},
+	nThemed: 0,
+	pass: null,
+	rcPaint: null,
+	drives: {},
 
 	Init: function () {
 		Sync.ModernWorkspace.bDark = Boolean(GetNum(te.Data.Conf_DarkMode));
@@ -113,12 +118,13 @@ Sync.ModernWorkspace = {
 		Sync.ModernWorkspace.Init();
 	},
 
-	Arrange: function (Ctrl) {
+	// nMode: 0 = view shown again (tab switch), 1 = navigation finished, 2 = window just created, 3 = theme changed
+	Arrange: function (Ctrl, nMode) {
 		const FV = GetFolderView(Ctrl);
 		if (FV) {
 			const hwnd = FV.hwndList;
 			if (hwnd) {
-				Sync.ModernWorkspace.SetColor(FV, hwnd);
+				Sync.ModernWorkspace.SetColor(FV, hwnd, nMode);
 			}
 		}
 	},
@@ -126,6 +132,14 @@ Sync.ModernWorkspace = {
 	ApplyThemeWindow: function (hwnd, themeName) {
 		if (!hwnd) {
 			return;
+		}
+		const pass = Sync.ModernWorkspace.pass;
+		if (pass) {
+			// Each window is themed only once per pass (parents and children overlap).
+			if (pass[hwnd]) {
+				return;
+			}
+			pass[hwnd] = 1;
 		}
 		try {
 			api.SetWindowTheme(hwnd, themeName, null);
@@ -157,10 +171,35 @@ Sync.ModernWorkspace = {
 		}
 	},
 
-	SetColor: function (FV, hwnd) {
+	SetColor: function (FV, hwnd, nMode) {
 		const bDark = Sync.ModernWorkspace.bDark;
 		const themeExp = bDark ? "darkmode_explorer" : "explorer";
 		const themeItems = bDark ? "darkmode_itemsview" : "itemsview";
+		const hHeader = api.SendMessage(hwnd, LVM_GETHEADER, 0, 0);
+
+		// Skip the (expensive) re-theming when this list window already has the current theme.
+		// A new view is themed when it is created and once more when its navigation finishes
+		// (child windows may appear late); switching back to an already themed tab costs nothing.
+		if ("number" === typeof hwnd) {
+			const key = (bDark ? "d" : "l") + hHeader;
+			const cur = Sync.ModernWorkspace.themed[hwnd];
+			if (nMode === 1 ? cur === key + "|n" : nMode !== 2 && nMode !== 3 && (cur === key + "|n" || cur === key + "|v")) {
+				return;
+			}
+			if (++Sync.ModernWorkspace.nThemed > 2000) {
+				Sync.ModernWorkspace.themed = {};
+				Sync.ModernWorkspace.nThemed = 0;
+			}
+			Sync.ModernWorkspace.themed[hwnd] = key + (nMode === 2 ? "|v" : "|n");
+		}
+		Sync.ModernWorkspace.pass = {};
+		try {
+			Sync.ModernWorkspace.SetColor2(FV, hwnd, bDark, themeExp, themeItems, hHeader);
+		} catch (e) { }
+		Sync.ModernWorkspace.pass = null;
+	},
+
+	SetColor2: function (FV, hwnd, bDark, themeExp, themeItems, hHeader) {
 
 		if (bDark) {
 			FV.ViewFlags |= 8;
@@ -186,7 +225,6 @@ Sync.ModernWorkspace = {
 			Sync.ModernWorkspace.ApplyThemeWindow(FV.hwnd, themeExp);
 			Sync.ModernWorkspace.ApplyThemeChildren(FV.hwnd, bDark);
 		}
-		const hHeader = api.SendMessage(hwnd, LVM_GETHEADER, 0, 0);
 		if (hHeader) {
 			Sync.ModernWorkspace.ApplyThemeWindow(hHeader, themeItems);
 		}
@@ -222,18 +260,90 @@ Sync.ModernWorkspace = {
 	Refresh: function () {
 		const cFV = te.Ctrls(CTRL_FV);
 		for (let i in cFV) {
-			Sync.ModernWorkspace.Arrange(cFV[i]);
+			Sync.ModernWorkspace.Arrange(cFV[i], 3);
 		}
+	},
+
+	// Everything the status bar needs, gathered in one call (the UI used to make hundreds of round trips).
+	GetStatus: function () {
+		const r = { total: 0, sel: 0, size: "", path: "" };
+		try {
+			const FV = GetFolderView();
+			if (!FV) {
+				return "";
+			}
+			r.total = FV.ItemCount(SVGIO_ALLVIEW);
+			r.sel = FV.ItemCount(SVGIO_SELECTION);
+			if (r.sel > 0 && r.sel <= 250) {
+				const selItems = FV.SelectedItems();
+				const t0 = new Date().getTime();
+				let totalBytes = 0;
+				let hasFile = false;
+				let bPartial = false;
+				for (let i = 0; i < r.sel; ++i) {
+					const it = selItems.Item(i);
+					if (it && !IsFolderEx(it)) {
+						const sz = it.ExtendedProperty("Size");
+						if (sz > 0) {
+							totalBytes += Number(sz);
+							hasFile = true;
+						}
+					}
+					if (new Date().getTime() - t0 > 200) {
+						bPartial = i < r.sel - 1;
+						break;
+					}
+				}
+				if (hasFile) {
+					r.size = api.StrFormatByteSize(totalBytes) + (bPartial ? "+" : "");
+				}
+			}
+			const folderItem = FV.FolderItem;
+			r.path = folderItem ? api.GetDisplayNameOf(folderItem, SHGDN_FORADDRESSBAR | SHGDN_FORPARSING) || "" : "";
+			const drvName = GetDriveName(r.path);
+			if (drvName) {
+				const now = new Date().getTime();
+				let d = Sync.ModernWorkspace.drives[drvName];
+				// Free space is cached per drive: asking a network share on every selection change is slow.
+				if (!d || now - d.t > (d.net ? 30000 : 5000)) {
+					d = { t: now, net: /^\\\\/.test(drvName), ok: false };
+					try {
+						const drv = (("undefined" !== typeof fso && fso) || api.CreateObject("fso")).GetDrive(drvName);
+						if (drv && drv.IsReady) {
+							const freeBytes = Number(drv.FreeSpace);
+							const totalBytes = Number(drv.TotalSize);
+							if (totalBytes > 0) {
+								d.ok = true;
+								d.pct = Math.min(100, Math.max(0, Math.round(((totalBytes - freeBytes) / totalBytes) * 100)));
+								d.free = api.StrFormatByteSize(freeBytes);
+								d.totalStr = api.StrFormatByteSize(totalBytes);
+							}
+						}
+					} catch (e) { }
+					Sync.ModernWorkspace.drives[drvName] = d;
+				}
+				if (d.ok) {
+					r.drv = { name: drvName, net: d.net, pct: d.pct, free: d.free, total: d.totalStr };
+				}
+			}
+		} catch (e) { }
+		return JSON.stringify(r);
 	}
 };
 
-AddEvent("ViewCreated", Sync.ModernWorkspace.Arrange);
-AddEvent("NavigateComplete", Sync.ModernWorkspace.Arrange);
-AddEvent("ChangeView", Sync.ModernWorkspace.Arrange);
+AddEvent("ViewCreated", function (Ctrl) {
+	Sync.ModernWorkspace.Arrange(Ctrl, 2);
+});
+AddEvent("NavigateComplete", function (Ctrl) {
+	Sync.ModernWorkspace.Arrange(Ctrl, 1);
+});
+AddEvent("ChangeView", function (Ctrl) {
+	Sync.ModernWorkspace.Arrange(Ctrl, 0);
+});
 
 AddEvent("Create", function (Ctrl) {
 	if (Ctrl.Type <= CTRL_EB) {
-		Sync.ModernWorkspace.Arrange(Ctrl);
+		Sync.ModernWorkspace.Arrange(Ctrl, 2);
 		return;
 	}
 	if (Ctrl.Type == CTRL_TV) {
@@ -265,11 +375,12 @@ AddEvent("Load", function () {
 	if (api.IsAppThemed() && WINVER > 0x603 && !Sync.ClassicStyle) {
 		AddEvent("ItemPrePaint2", function (Ctrl, pid, nmcd, vcd, plRes) {
 			if (Sync.ModernWorkspace.bDark) {
-				const uState = api.SendMessage(Ctrl.hwndList, LVM_GETITEMSTATE, nmcd.dwItemSpec, LVIS_SELECTED);
+				const hList = Ctrl.hwndList;
+				const uState = api.SendMessage(hList, LVM_GETITEMSTATE, nmcd.dwItemSpec, LVIS_SELECTED);
 				if (uState & LVIS_SELECTED || nmcd.uItemState & CDIS_HOT) {
-					const rc = api.Memory("RECT");
+					const rc = Sync.ModernWorkspace.rcPaint || (Sync.ModernWorkspace.rcPaint = api.Memory("RECT"));
 					rc.left = LVIR_SELECTBOUNDS;
-					api.SendMessage(Ctrl.hwndList, LVM_GETITEMRECT, nmcd.dwItemSpec, rc);
+					api.SendMessage(hList, LVM_GETITEMRECT, nmcd.dwItemSpec, rc);
 					api.SetDCBrushColor(nmcd.hdc, (uState & LVIS_SELECTED) ? 0x5c3b1e : 0x3b2818);
 					api.FillRect(nmcd.hdc, rc, api.GetStockObject(DC_BRUSH));
 				}

@@ -287,62 +287,29 @@ if (window.Addon == 1) {
 				return;
 			}
 			try {
-				const FV = await GetFolderView();
-				if (!FV) {
+				if (!(await $.Sync && await $.Sync.ModernWorkspace)) {
 					return;
 				}
-				const totalCount = await FV.ItemCount(SVGIO_ALLVIEW);
-				const selCount = await FV.ItemCount(SVGIO_SELECTION);
-				let selSizeText = "";
-				if (selCount > 0 && selCount <= 250) {
-					const selItems = await FV.SelectedItems();
-					let totalBytes = 0;
-					let hasFile = false;
-					for (let i = 0; i < selCount; ++i) {
-						const it = await selItems.Item(i);
-						if (it && !await IsFolderEx(it)) {
-							const sz = await it.ExtendedProperty("Size");
-							if (sz > 0) {
-								totalBytes += Number(sz);
-								hasFile = true;
-							}
-						}
-					}
-					if (hasFile) {
-						selSizeText = " (" + (await api.StrFormatByteSize(totalBytes)) + ")";
-					}
+				// One round trip: counts, selected size and (cached) drive space are gathered on the host side.
+				const json = await $.Sync.ModernWorkspace.GetStatus();
+				const st = json ? JSON.parse(json) : null;
+				if (!st) {
+					return;
 				}
-				let leftHtml = "📦 <b>" + totalCount + "</b> " + T["items"];
-				if (selCount > 0) {
-					leftHtml += " &nbsp;•&nbsp; ✅ <b>" + selCount + "</b> " + T["selected"] + "<b>" + EncodeSC(selSizeText) + "</b>";
+				let leftHtml = "📦 <b>" + st.total + "</b> " + T["items"];
+				if (st.sel > 0) {
+					leftHtml += " &nbsp;•&nbsp; ✅ <b>" + st.sel + "</b> " + T["selected"] + "<b>" + EncodeSC(st.size ? " (" + st.size + ")" : "") + "</b>";
 				}
 				elLeft.innerHTML = leftHtml;
 
-				// Drive / Network Share Free Space
-				const folderItem = await FV.FolderItem;
-				const path = folderItem ? await api.GetDisplayNameOf(folderItem, SHGDN_FORADDRESSBAR | SHGDN_FORPARSING) : "";
-				const drvName = GetDriveName(path);
-				if (drvName) {
-					try {
-						const drv = await fso.GetDrive(drvName);
-						if (drv && await drv.IsReady) {
-							const freeBytes = Number(await drv.FreeSpace);
-							const totalBytes = Number(await drv.TotalSize);
-							if (totalBytes > 0) {
-								const usedPct = Math.min(100, Math.max(0, Math.round(((totalBytes - freeBytes) / totalBytes) * 100)));
-								const freeStr = await api.StrFormatByteSize(freeBytes);
-								const totalStr = await api.StrFormatByteSize(totalBytes);
-								const isNet = /^\\\\/.test(drvName);
-								const icon = isNet ? "🌐" : "💽";
-								const barColor = usedPct > 90 ? "#ef4444" : (usedPct > 75 ? "#f59e0b" : "#0284c7");
-								elRight.innerHTML = icon + " <span>" + EncodeSC(drvName) + "</span>: <b>" + freeStr + " " + T["free"] + "</b> / " + totalStr + " (" + usedPct + "%)" +
-									'<span class="mw-progress"><span class="mw-progress-fill" style="width:' + usedPct + '%; background-color:' + barColor + '"></span></span>';
-								return;
-							}
-						}
-					} catch (e) { }
+				const d = st.drv;
+				if (d) {
+					const barColor = d.pct > 90 ? "#ef4444" : (d.pct > 75 ? "#f59e0b" : "#0284c7");
+					elRight.innerHTML = (d.net ? "🌐" : "💽") + " <span>" + EncodeSC(d.name) + "</span>: <b>" + EncodeSC(d.free) + " " + T["free"] + "</b> / " + EncodeSC(d.total) + " (" + d.pct + "%)" +
+						'<span class="mw-progress"><span class="mw-progress-fill" style="width:' + d.pct + '%; background-color:' + barColor + '"></span></span>';
+					return;
 				}
-				elRight.innerHTML = path ? "📍 " + EncodeSC(path) : "";
+				elRight.innerHTML = st.path ? "📍 " + EncodeSC(st.path) : "";
 			} catch (e) { }
 		},
 
