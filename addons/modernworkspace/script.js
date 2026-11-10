@@ -2,6 +2,37 @@ const Addon_Id = "modernworkspace";
 const item = GetAddonElement(Addon_Id);
 
 if (window.Addon == 1) {
+	const T = {};
+	for (const k of [
+		"Dual Pane",
+		"Single pane / side-by-side dual pane (F6)",
+		"Preview",
+		"Show / hide the preview pane",
+		"Dated Folder",
+		"Create a new folder named with today's date (YYYY-MM-DD)",
+		"Dark",
+		"Light",
+		"Switch between light and dark theme",
+		"Ready",
+		"items",
+		"selected",
+		"free",
+		"Name",
+		"Type",
+		"Size",
+		"Date modified",
+		"Full path",
+		"Folder",
+		"File",
+		"%s items copied to the clipboard as a table (ready to paste into Excel)",
+		"Folder created: %s",
+		"Application icon changed to #%s",
+		"Desktop and Windows folder icons updated",
+		"Windows folder icons restored to default"
+	]) {
+		T[k] = await GetText(k);
+	}
+
 	Addons.ModernWorkspace = {
 		isDark: false,
 		savedRightWidth: 230,
@@ -152,7 +183,7 @@ if (window.Addon == 1) {
 			if (!nCount) {
 				return;
 			}
-			const rows = ["Ad\tTür\tBoyut\tDeğiştirme Tarihi\tTam Yol"];
+			const rows = [[T["Name"], T["Type"], T["Size"], T["Date modified"], T["Full path"]].join("\t")];
 			for (let i = 0; i < nCount; ++i) {
 				const item = await Items.Item(i);
 				if (!item) {
@@ -160,7 +191,7 @@ if (window.Addon == 1) {
 				}
 				const name = await item.Name || "";
 				const isFolder = await IsFolderEx(item);
-				const typeStr = isFolder ? "Klasör" : (await api.PSFormatForDisplay("Type", await item.ExtendedProperty("Type"), PDFF_DEFAULT) || "Dosya");
+				const typeStr = isFolder ? T["Folder"] : (await api.PSFormatForDisplay("Type", await item.ExtendedProperty("Type"), PDFF_DEFAULT) || T["File"]);
 				let sizeStr = "";
 				if (!isFolder) {
 					const sz = await item.ExtendedProperty("Size");
@@ -171,7 +202,7 @@ if (window.Addon == 1) {
 				rows.push([name, typeStr, sizeStr, dateStr, fullPath].join("\t"));
 			}
 			await api.SetClipboardData(rows.join("\r\n"));
-			Addons.ModernWorkspace.FlashMessage("📋 " + nCount + " öğe tablo olarak panoya kopyalandı (Excel'e yapıştırabilirsiniz)");
+			Addons.ModernWorkspace.FlashMessage("📋 " + T["%s items copied to the clipboard as a table (ready to paste into Excel)"].replace("%s", nCount));
 		},
 
 		CreateDatedFolder: async function () {
@@ -204,7 +235,7 @@ if (window.Addon == 1) {
 						await SelectItem(FV, targetPath, SVSI_SELECT | SVSI_FOCUSED | SVSI_ENSUREVISIBLE | SVSI_DESELECTOTHERS, 99);
 					}, 250);
 				}, 100);
-				Addons.ModernWorkspace.FlashMessage("📅 Klasör oluşturuldu: " + targetName);
+				Addons.ModernWorkspace.FlashMessage("📅 " + T["Folder created: %s"].replace("%s", targetName));
 			}
 		},
 
@@ -244,7 +275,7 @@ if (window.Addon == 1) {
 			}
 			const btnTheme = document.getElementById("mw_btn_theme");
 			if (btnTheme) {
-				btnTheme.innerHTML = Addons.ModernWorkspace.isDark ? "☀️ Açık" : "🌙 Koyu";
+				btnTheme.innerHTML = Addons.ModernWorkspace.isDark ? "☀️ " + T["Light"] : "🌙 " + T["Dark"];
 				btnTheme.className = "mw-btn" + (Addons.ModernWorkspace.isDark ? " mw-btn-active" : "");
 			}
 		},
@@ -281,9 +312,9 @@ if (window.Addon == 1) {
 						selSizeText = " (" + (await api.StrFormatByteSize(totalBytes)) + ")";
 					}
 				}
-				let leftHtml = "📦 <b>" + totalCount + "</b> öğe";
+				let leftHtml = "📦 <b>" + totalCount + "</b> " + T["items"];
 				if (selCount > 0) {
-					leftHtml += " &nbsp;•&nbsp; ✅ <b>" + selCount + "</b> seçili<b>" + EncodeSC(selSizeText) + "</b>";
+					leftHtml += " &nbsp;•&nbsp; ✅ <b>" + selCount + "</b> " + T["selected"] + "<b>" + EncodeSC(selSizeText) + "</b>";
 				}
 				elLeft.innerHTML = leftHtml;
 
@@ -304,7 +335,7 @@ if (window.Addon == 1) {
 								const isNet = /^\\\\/.test(drvName);
 								const icon = isNet ? "🌐" : "💽";
 								const barColor = usedPct > 90 ? "#ef4444" : (usedPct > 75 ? "#f59e0b" : "#0284c7");
-								elRight.innerHTML = icon + " <span>" + EncodeSC(drvName) + "</span>: <b>" + freeStr + " boş</b> / " + totalStr + " (" + usedPct + "%)" +
+								elRight.innerHTML = icon + " <span>" + EncodeSC(drvName) + "</span>: <b>" + freeStr + " " + T["free"] + "</b> / " + totalStr + " (" + usedPct + "%)" +
 									'<span class="mw-progress"><span class="mw-progress-fill" style="width:' + usedPct + '%; background-color:' + barColor + '"></span></span>';
 								return;
 							}
@@ -319,11 +350,11 @@ if (window.Addon == 1) {
 			if (await $.Sync && await $.Sync.ModernWorkspace) {
 				const res = await $.Sync.ModernWorkspace.ShowIconMenu();
 				if (res >= 1 && res <= 4) {
-					Addons.ModernWorkspace.FlashMessage("🎨 Uygulama ikonu #" + res + " olarak değiştirildi");
+					Addons.ModernWorkspace.FlashMessage("🎨 " + T["Application icon changed to #%s"].replace("%s", res));
 				} else if (res == 10) {
-					Addons.ModernWorkspace.FlashMessage("📁 Masaüstü ve Windows klasör ikonları güncellendi");
+					Addons.ModernWorkspace.FlashMessage("📁 " + T["Desktop and Windows folder icons updated"]);
 				} else if (res == 11) {
-					Addons.ModernWorkspace.FlashMessage("📁 Windows klasör ikonları varsayılana döndürüldü");
+					Addons.ModernWorkspace.FlashMessage("📁 " + T["Windows folder icons restored to default"]);
 				}
 			}
 		},
@@ -339,18 +370,19 @@ if (window.Addon == 1) {
 	AddEvent("Layout", async function () {
 		const barHtml = [
 			'<span class="mw-bar">',
-			'<span id="mw_btn_dual" class="mw-btn" onclick="Addons.ModernWorkspace.ToggleDualPane()" title="Tek Panel / Yan Yana Çift Panel (F6)">◫ Çift Panel</span>',
-			'<span id="mw_btn_preview" class="mw-btn" onclick="Addons.ModernWorkspace.TogglePreview()" title="Sağ Önizleme Panelini Aç / Kapat">👁 Önizleme</span>',
-			'<span id="mw_btn_datefolder" class="mw-btn" onclick="Addons.ModernWorkspace.CreateDatedFolder()" title="Bugünün tarihiyle (YYYY-AA-GG) yeni klasör oluştur">📅 Tarihli Klasör</span>',
-			'<span id="mw_btn_theme" class="mw-btn" onclick="Addons.ModernWorkspace.ToggleTheme()" title="Açık / Koyu Tema Değiştir">🌙 Koyu</span>',
+			'<span id="mw_btn_dual" class="mw-btn" onclick="Addons.ModernWorkspace.ToggleDualPane()" title="' + T["Single pane / side-by-side dual pane (F6)"] + '">◫ ' + T["Dual Pane"] + '</span>',
+			'<span id="mw_btn_preview" class="mw-btn" onclick="Addons.ModernWorkspace.TogglePreview()" title="' + T["Show / hide the preview pane"] + '">👁 ' + T["Preview"] + '</span>',
+			'<span id="mw_btn_datefolder" class="mw-btn" onclick="Addons.ModernWorkspace.CreateDatedFolder()" title="' + EncodeSC(T["Create a new folder named with today's date (YYYY-MM-DD)"]) + '">📅 ' + T["Dated Folder"] + '</span>',
+			'<span id="mw_btn_theme" class="mw-btn" onclick="Addons.ModernWorkspace.ToggleTheme()" title="' + T["Switch between light and dark theme"] + '">🌙 ' + T["Dark"] + '</span>',
 			'</span>'
 		].join("");
 		await SetAddon(Addon_Id, "ToolBar2Right", barHtml);
 
-		const statusHtml = '<div class="mw-statusbar"><div id="mw_status_left">Hazır</div><div id="mw_status_right"></div></div>';
+		const statusHtml = '<div class="mw-statusbar"><div id="mw_status_left">' + T["Ready"] + '</div><div id="mw_status_right"></div></div>';
 		await SetAddon(null, "BottomBar3Center", statusHtml);
 
 		SetKeyExec("All", "$40", Addons.ModernWorkspace.ToggleDualPane, "Func", true);
+		SetKeyExec("All", "Ctrl+Shift+C", Addons.ModernWorkspace.CopyAsTable, "Func", true);
 	});
 
 	AddEvent("Load", Addons.ModernWorkspace.Init);

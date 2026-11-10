@@ -1,4 +1,4 @@
-param(
+﻿param(
     [int]$IconIndex = 1,
     [switch]$ApplyFolderIcons,
     [switch]$RestoreFolderIcons
@@ -6,7 +6,8 @@ param(
 
 $baseDir = Split-Path -Parent $PSScriptRoot
 if (-not $baseDir -or -not (Test-Path (Join-Path $baseDir "mEXplorer.exe"))) {
-    $baseDir = "."
+    Write-Error "mEXplorer.exe not found next to the icons folder."
+    exit 1
 }
 $icoPath = Join-Path $baseDir "icons\icon$IconIndex.ico"
 if (-not (Test-Path $icoPath)) {
@@ -136,9 +137,12 @@ function Update-BinaryIconLive([string]$targetFile, [string]$iconFile) {
     [IconResUpdater]::SHChangeNotify(0x00002000, 0x0005, $targetFile, $null)
 }
 
-# 1. Update mEXplorer.exe and lib\te64.dll embedded icon resources
+# 1. Update mEXplorer.exe, TE64.exe, TE32.exe and lib\te64.dll / te32.dll embedded icon resources
 Update-BinaryIconLive (Join-Path $baseDir "mEXplorer.exe") $icoPath
+Update-BinaryIconLive (Join-Path $baseDir "TE64.exe") $icoPath
+Update-BinaryIconLive (Join-Path $baseDir "TE32.exe") $icoPath
 Update-BinaryIconLive (Join-Path $baseDir "lib\te64.dll") $icoPath
+Update-BinaryIconLive (Join-Path $baseDir "lib\te32.dll") $icoPath
 
 # 2. Update Desktop Shortcut (mEXplorer.lnk)
 try {
@@ -178,7 +182,7 @@ if ($bgRk) {
     $bgCmdRk.SetValue("", ('"{0}" "%V"' -f $exePath))
     $bgCmdRk.Close()
 }
-$cu.DeleteSubKeyTree("Software\Classes\Folder", $false)
+$cu.DeleteSubKeyTree("Software\Classes\Folder\shell\tablacus", $false)
 
 # 4. Handle Desktop & Windows Folder Icons
 $desktopDir = [Environment]::GetFolderPath("Desktop")

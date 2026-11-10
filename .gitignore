@@ -3,3 +3,11 @@ config/remember.xml
 config/closedtabs.xml
 config/window1.xml
 config/*.bak
+*.old
+
+# Personal tab colour rules (defaults live in init/tabcolorplus.tsv)
+config/tabcolorplus.tsv
+
+# Local copies of mEXplorer.exe
+TE32.exe
+TE64.exe

@@ -22,9 +22,9 @@
   - Instant real-time filtering bar (`Filter...`) in the top toolbar to filter thousands of files as you type.
 - **⚡ Productivity Workspace Tools:**
   - **Dual-Pane (`F6`):** Toggle side-by-side dual folder panes with a single click or `F6`.
-  - **Copy Table for Excel (`Ctrl + Shift + C`):** Copy selected files' Name, Size, and Modified Date in TSV format ready to paste directly into Microsoft Excel.
+  - **Copy Table for Excel (`Ctrl + Shift + C`):** Copy selected files' Name, Type, Size, Modified Date and Full Path as a table ready to paste directly into Microsoft Excel (also under the `Tools` menu).
   - **Dated Folder Creator:** Create a new folder named with today's date (`YYYY-MM-DD`) in one click.
-  - **Terminal / PowerShell Launcher:** Open PowerShell directly in the active folder path.
+  - **Terminal / PowerShell Launcher:** Open PowerShell directly in the active folder path (`Tools` menu).
   - **Rich Status Bar:** Displays total item count, selected item count & total size, plus active drive free space / total capacity with usage percentage.
 
 ### 🚀 Usage (Portable)
@@ -52,9 +52,9 @@ To check for updates, use **`Help > Check for updates`**, which checks the offic
   - Üst bardaki `Filtre` kutusu ile klasör içindeki binlerce dosyayı yazdığınız anda süzme.
 - **⚡ Üretkenlik Araçları (`Modern Workspace`):**
   - **Çift Panel (`F6`):** Tek tuşla yan yana iki klasör görünümü (Dual-Pane) açıp kapatma.
-  - **Excel Tablo Kopyala (`Ctrl + Shift + C`):** Seçili dosyaların Ad, Boyut ve Tarih bilgilerini doğrudan Excel'e tablo olarak yapıştırma.
+  - **Excel Tablo Kopyala (`Ctrl + Shift + C`):** Seçili dosyaların Ad, Tür, Boyut, Tarih ve Tam Yol bilgilerini doğrudan Excel'e tablo olarak yapıştırma (`Araçlar` menüsünde de bulunur).
   - **Tarihli Klasör:** Tek tıkla `YYYY-AA-GG` formatında yeni klasör oluşturma.
-  - **Terminal / PowerShell:** Bulunduğunuz klasörde anında PowerShell başlatma.
+  - **Terminal / PowerShell:** Bulunduğunuz klasörde anında PowerShell başlatma (`Araçlar` menüsü).
   - **Zengin Durum Çubuğu:** Toplam/seçili öğe sayısı, seçili dosya boyutu ve aktif sürücünün doluluk oranı / kalan boş alanı.
 
 ### 🚀 Kurulum ve Kullanım
@@ -64,6 +64,22 @@ Güncellemeleri kontrol etmek için **`Yardım > Güncellemeleri kontrol et`** m
 
 ---
 
+## 📦 Releases / Sürüm Yayınlama
+
+The updater downloads the first `.zip` asset of the latest GitHub release and reads the version from its file name, so name it by date: `mEXplorerYYMMDD.zip` (e.g. `mEXplorer261110.zip`).
+
+Güncelleyici, en son GitHub sürümündeki ilk `.zip` dosyasını indirir ve sürümü dosya adından okur; dosyayı tarihle adlandırın: `mEXplorerYYAAGG.zip` (örn. `mEXplorer261110.zip`).
+
+---
+
+## 🙏 Credits / Teşekkür
+
+mEXplorer is based on [Tablacus Explorer](https://github.com/tablacus/TablacusExplorer) by Gaku (MIT License).
+
+mEXplorer, Gaku tarafından geliştirilen [Tablacus Explorer](https://github.com/tablacus/TablacusExplorer) (MIT Lisansı) üzerine kuruludur.
+
+---
+
 ## 📄 License / Lisans
 
-MIT License
+MIT License — see [LICENSE](LICENSE).

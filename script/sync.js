@@ -3084,17 +3084,23 @@ OpenNewProcess = function (fn, ex, mode, vOperation) {
 	} while (MainWindow.Exchange[uid]);
 	MainWindow.Exchange[uid] = ex;
 	const ar = [mode ? '/open' : '/run', fn, uid];
-	if (/rundll32\.?(exe)?"?$/i.test(api.CommandLineToArgv(api.GetCommandLine())[0])) {
+	const cmd0 = api.CommandLineToArgv(api.GetCommandLine())[0];
+	if (/rundll32\.?(exe)?"?$/i.test(cmd0)) {
 		ar.unshift(PathQuoteSpaces(BuildPath(ui_.Installed, "lib", "te" + ui_.bit + ".dll")) + ",RunDLL");
 	}
-	let exePath = api.GetModuleFileName(null);
-	if (!api.PathFileExists(exePath)) {
-		exePath = BuildPath(te.Data.Installed, "mEXplorer.exe");
+	let exe = cmd0;
+	if (!exe || /rundll32\.?(exe)?"?$/i.test(exe) || !api.PathFileExists(exe)) {
+		exe = api.GetModuleFileName(null);
 	}
-	ar.unshift(PathQuoteSpaces(exePath));
+	if (!api.PathFileExists(exe)) {
+		const mexp = BuildPath(GetParentFolderName(exe), "mEXplorer.exe");
+		if (api.PathFileExists(mexp)) {
+			exe = mexp;
+		}
+	}
+	ar.unshift(PathQuoteSpaces(exe));
 	return ShellExecute(ar.join(" "), vOperation, mode ? SW_SHOWNORMAL : SW_SHOWNOACTIVATE);
 }
-
 GetAddonInfo = function (Id) {
 	if (isFinite(Id)) {
 		Id = (te.Data.Addons.documentElement.childNodes[Id] || {}).nodeName;

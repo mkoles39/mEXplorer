@@ -326,9 +326,14 @@ CheckUpdate2 = async function (xhr, url, arg1) {
 	if (json && json.length) {
 		json = json[0];
 	}
-	if (json && json.assets && json.assets[0]) {
-		arg.size = json.assets[0].size / 1024;
-		arg.url = json.assets[0].browser_download_url;
+	if (json && json.assets) {
+		for (let i = 0; i < json.assets.length; ++i) {
+			if (/\.zip$/i.test(json.assets[i].name || json.assets[i].browser_download_url)) {
+				arg.size = json.assets[i].size / 1024;
+				arg.url = json.assets[i].browser_download_url;
+				break;
+			}
+		}
 	}
 	let ver = 0;
 	if (await arg.url) {

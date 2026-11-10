@@ -620,7 +620,7 @@ g_basic = {
 				if (FV) {
 					let Selected = FV.SelectedItems();
 					if (!Selected.Count) {
-						Selected = api.GetModuleFileName(null);
+						Selected = api.PathFileExists(api.GetModuleFileName(null)) ? api.GetModuleFileName(null) : api.CommandLineToArgv(api.GetCommandLine())[0];
 					}
 					const ContextMenu = api.ContextMenu(Selected, FV);
 					if (ContextMenu) {
@@ -2343,7 +2343,8 @@ te.OnSystemMessage = function (Ctrl, hwnd, msg, wParam, lParam) {
 				case WM_DESTROY:
 					const pid = api.Memory("DWORD");
 					api.GetWindowThreadProcessId(te.hwnd, pid);
-					WmiProcess("WHERE ExecutablePath = '" + (api.GetModuleFileName(null).split("\\").join("\\\\")) + "' AND ProcessId!=" + pid[0], function (item) {
+					const myExePath = api.PathFileExists(api.GetModuleFileName(null)) ? api.GetModuleFileName(null) : api.CommandLineToArgv(api.GetCommandLine())[0];
+					WmiProcess("WHERE ExecutablePath = '" + (myExePath.split("\\").join("\\\\")) + "' AND ProcessId!=" + pid[0], function (item) {
 						const hwnd = GethwndFromPid(item.ProcessId);
 						api.SetWindowLongPtr(hwnd, GWL_EXSTYLE, api.GetWindowLongPtr(hwnd, GWL_EXSTYLE) & ~0x80);
 						api.ShowWindow(hwnd, SW_SHOWNORMAL);
@@ -3590,7 +3591,8 @@ UpdateAndReload = function (arg) {
 		update = BuildPath(te.Data.Installed, "script\\update.js");
 	}
 	g_.strUpdate = [PathQuoteSpaces(BuildPath(api.IsWow64Process(api.GetCurrentProcess()) ? GetWindowsPath("Sysnative") : system32, "wscript.exe")), '/E:JScript', PathQuoteSpaces(update), PathQuoteSpaces(api.GetModuleFileName(null)), PathQuoteSpaces(arg.temp), PathQuoteSpaces(api.LoadString(hShell32, 12612)), PathQuoteSpaces(api.LoadString(hShell32, 12852))].join(" ");
-	WmiProcess("WHERE ExecutablePath='" + (api.GetModuleFileName(null).split("\\").join("\\\\")) + "' AND ProcessId!=" + arg.pid, function (item) {
+	const updateExe = api.PathFileExists(api.GetModuleFileName(null)) ? api.GetModuleFileName(null) : api.CommandLineToArgv(api.GetCommandLine())[0];
+	WmiProcess("WHERE ExecutablePath='" + (updateExe.split("\\").join("\\\\")) + "' AND ProcessId!=" + arg.pid, function (item) {
 		if (!/\/run/i.test(item.CommandLine)) {
 			item.Terminate();
 		}
@@ -4011,7 +4013,7 @@ if (!te.Data) {
 	te.Data.DataFolder = te.Data.Installed;
 	te.Data.TempFolder = GetTempPath(1);
 	let fn = function () {
-		te.Data.DataFolder = BuildPath(api.GetDisplayNameOf(ssfAPPDATA, SHGDN_FORADDRESSBAR | SHGDN_FORPARSING), "Tablacus\\Explorer");
+		te.Data.DataFolder = BuildPath(api.GetDisplayNameOf(ssfAPPDATA, SHGDN_FORADDRESSBAR | SHGDN_FORPARSING), "mEXplorer");
 		const ParentFolder = GetParentFolderName(te.Data.DataFolder);
 		if (!api.PathIsDirectory(ParentFolder)) {
 			try {

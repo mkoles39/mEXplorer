@@ -76,7 +76,7 @@ Sync.ModernWorkspace = {
 
 		const hMenu = api.CreatePopupMenu();
 		const names = [
-			"1. Fluent Electric Blue 'm' (Varsayılan)",
+			"1. Fluent Electric Blue 'm'",
 			"2. Dark Obsidian & Gold (mX)",
 			"3. Neon Cyber Gradient",
 			"4. Minimalist Emerald Pro"
@@ -86,8 +86,8 @@ Sync.ModernWorkspace = {
 			api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING | (curIcon == id ? MF_CHECKED : 0), id, names[i]);
 		}
 		api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_SEPARATOR, 0, null);
-		api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING | (isFolderCustom ? MF_CHECKED : 0), 10, "Masaüstü / Windows Klasör İkonlarına da Uygula");
-		api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING, 11, "Windows Klasör İkonlarını Varsayılana Döndür");
+		api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING | (isFolderCustom ? MF_CHECKED : 0), 10, GetText("Also apply to Desktop / Windows folder icons"));
+		api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING, 11, GetText("Restore default Windows folder icons"));
 
 		const pt = api.Memory("POINT");
 		api.GetCursorPos(pt);
@@ -242,7 +242,17 @@ AddEvent("Create", function (Ctrl) {
 });
 
 AddEvent("Tools", function (Ctrl, hMenu, nPos) {
-	api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING, ++nPos, "🎨 Uygulama ve Klasör İkonu Seç...");
+	api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING, ++nPos, "📋 " + GetText("Copy as table for Excel") + "\tCtrl+Shift+C");
+	ExtraMenuCommand[nPos] = function () {
+		InvokeUI("Addons.ModernWorkspace.CopyAsTable");
+		return S_OK;
+	};
+	api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING, ++nPos, "⌨ " + GetText("Open PowerShell here"));
+	ExtraMenuCommand[nPos] = function () {
+		InvokeUI("Addons.ModernWorkspace.OpenTerminal");
+		return S_OK;
+	};
+	api.InsertMenu(hMenu, MAXINT, MF_BYPOSITION | MF_STRING, ++nPos, "🎨 " + GetText("Choose application and folder icon..."));
 	ExtraMenuCommand[nPos] = function () {
 		Sync.ModernWorkspace.ShowIconMenu();
 		return S_OK;

@@ -8,7 +8,11 @@ try {
 	const ado = api.CreateObject("ads");
 	ado.CharSet = "utf-8";
 	ado.Open();
-	ado.LoadFromFile(BuildPath(te.Data.DataFolder, "config\\tabcolorplus.tsv"));
+	let tsv = BuildPath(te.Data.DataFolder, "config\\tabcolorplus.tsv");
+	if (!api.PathFileExists(tsv)) {
+		tsv = BuildPath(te.Data.Installed, "init\\tabcolorplus.tsv");
+	}
+	ado.LoadFromFile(tsv);
 	while (!ado.EOS) {
 		const ar = ado.ReadText(adReadLine).split("\t");
 		if (ar[0] != "") {
