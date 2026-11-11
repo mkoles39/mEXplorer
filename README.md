@@ -1,4 +1,9 @@
-# mEXplorer
+﻿# mEXplorer
+
+![CI](https://github.com/mkoles39/mEXplorer/actions/workflows/ci.yml/badge.svg)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Latest Release](https://img.shields.io/github/v/release/mkoles39/mEXplorer)](https://github.com/mkoles39/mEXplorer/releases)
+[![Downloads](https://img.shields.io/github/downloads/mkoles39/mEXplorer/total)](https://github.com/mkoles39/mEXplorer/releases)
 
 > 🇬🇧 **[English](#-mexplorer--modern-tabbed-file-manager-for-windows)** | 🇹🇷 **[Türkçe](#-mexplorer--modern-sekmeli-windows-dosya-yöneticisi)**
 
@@ -10,27 +15,31 @@
 
 ### ✨ Key Features
 
-- **🪟 Default File Manager & `Win + E` Integration:**
-  - Easily set **mEXplorer** as your default Windows file manager for folders and drives, and redirect the `Win + E` keyboard shortcut directly from `Tools > Options > General`.
-- **🎨 Modern Windows 11 / Fluent UI & Full Dark Mode:**
-  - Instant one-click toggle between **Dark Mode (`🌙`)** and **Light Mode (`☀️`)** from the top toolbar.
-  - Full dark theme support across the window title bar, folder tree (`TreeView`), file list (`ListView`), column headers, and native horizontal/vertical scrollbars.
-- **🏷️ Automatic Tab Coloring (`Tab Color Plus`):**
-  - Automatically color-codes tabs based on folder type (`Documents`, `Downloads`, `Desktop`, `System Drive C:\`, `Network`) with adaptive palettes for both Light and Dark themes.
-- **👁️ Full-Height Quick Preview & Instant Filter:**
-  - Right-side preview panel for inspecting images, text files, PDFs, and media without opening external apps.
-  - Instant real-time filtering bar (`Filter...`) in the top toolbar to filter thousands of files as you type.
-- **⚡ Productivity Workspace Tools:**
-  - **Dual-Pane (`F6`):** Toggle side-by-side dual folder panes with a single click or `F6`.
-  - **Copy Table for Excel (`Ctrl + Shift + C`):** Copy selected files' Name, Type, Size, Modified Date and Full Path as a table ready to paste directly into Microsoft Excel (also under the `Tools` menu).
-  - **Dated Folder Creator:** Create a new folder named with today's date (`YYYY-MM-DD`) in one click.
-  - **Terminal / PowerShell Launcher:** Open PowerShell directly in the active folder path (`Tools` menu).
-  - **Rich Status Bar:** Displays total item count, selected item count & total size, plus active drive free space / total capacity with usage percentage.
+- **🪟 Default File Manager & Win + E Integration:** Set mEXplorer as your default Windows file manager for folders and drives, and redirect the Win + E keyboard shortcut directly from Tools > Options > General.
+- **🎨 Modern Windows 11 / Fluent UI & Full Dark Mode:** One-click Dark/Light mode toggle from the top toolbar. Full dark theme support across title bar, TreeView, ListView, column headers, and scrollbars.
+- **🏷️ Automatic Tab Coloring (Tab Color Plus):** Color-codes tabs by folder type with adaptive palettes for Light and Dark themes.
+- **👁️ Full-Height Quick Preview & Instant Filter:** Preview images, text, PDFs, and media in the right-side panel. Real-time filtering bar to filter thousands of files as you type.
+- **⚡ Productivity Workspace Tools:** Dual-Pane (F6), Copy Table for Excel (Ctrl + Shift + C), Dated Folder Creator, Terminal/PowerShell Launcher, Rich Status Bar.
 
-### 🚀 Usage (Portable)
+### 🚀 Quick Start (Portable)
 
-No installation required. Simply run **`mEXplorer.exe`** from the project folder.
-To check for updates, use **`Help > Check for updates`**, which checks the official GitHub releases at [mkoles39/mEXplorer](https://github.com/mkoles39/mEXplorer/releases).
+No installation required. Download the latest .zip from [Releases](https://github.com/mkoles39/mEXplorer/releases), extract, and run **mEXplorer.exe**.
+
+### 📸 Screenshots
+
+Add screenshots here showing Dark Mode, Dual-Pane, and Preview Panel.
+
+### 📦 Releases / Sürüm Yayınlama
+
+The updater downloads the first .zip asset of the latest GitHub release. Name it by date: mEXplorerYYMMDD.zip (e.g. mEXplorer261110.zip).
+
+### 🙏 Credits / Teşekkür
+
+mEXplorer is based on [Tablacus Explorer](https://github.com/tablacus/TablacusExplorer) by Gaku (MIT License).
+
+### 📄 License / Lisans
+
+MIT License — see [LICENSE](LICENSE).
 
 ---
 
@@ -40,46 +49,28 @@ To check for updates, use **`Help > Check for updates`**, which checks the offic
 
 ### ✨ Öne Çıkan Özellikler
 
-- **🪟 Varsayılan Dosya Yöneticisi & `Win + E` Entegrasyonu:**
-  - `Araçlar > Seçenekler > Genel` menüsünden tek tıkla Windows'un varsayılan dosya yöneticisi olarak ayarlanabilir ve `Win + E` klavye kısayolunu devralabilir.
-- **🎨 Modern Windows 11 / Fluent Tasarım & Tam Kapsamlı Koyu Tema (Dark Mode):**
-  - Üst araç çubuğundan (`🌙 Koyu` / `☀️ Açık`) anında değiştirilebilen koyu ve açık tema desteği.
-  - Üst pencere başlık çubuğu (Title Bar), sol klasör ağacı (`TreeView`), dosya listesi, sütun başlıkları ve alt/sağ kaydırma çubukları (scrollbars) dahil eksiksiz koyu mod uyumu.
-- **🏷️ Otomatik Sekme Renklendirme (`Tab Color Plus`):**
-  - Klasör türüne göre (`Belgeler`, `İndirilenler`, `Masaüstü`, `C:\`, `Ağ`) sekmeleri otomatik olarak hem açık hem koyu temaya uygun renklerle ayırır.
-- **👁️ Tam Boy Hızlı Önizleme & Anında Filtreleme:**
-  - Sağ kenar çubuğunda seçili resim, metin, PDF ve medya dosyalarını açmadan önizleme.
-  - Üst bardaki `Filtre` kutusu ile klasör içindeki binlerce dosyayı yazdığınız anda süzme.
-- **⚡ Üretkenlik Araçları (`Modern Workspace`):**
-  - **Çift Panel (`F6`):** Tek tuşla yan yana iki klasör görünümü (Dual-Pane) açıp kapatma.
-  - **Excel Tablo Kopyala (`Ctrl + Shift + C`):** Seçili dosyaların Ad, Tür, Boyut, Tarih ve Tam Yol bilgilerini doğrudan Excel'e tablo olarak yapıştırma (`Araçlar` menüsünde de bulunur).
-  - **Tarihli Klasör:** Tek tıkla `YYYY-AA-GG` formatında yeni klasör oluşturma.
-  - **Terminal / PowerShell:** Bulunduğunuz klasörde anında PowerShell başlatma (`Araçlar` menüsü).
-  - **Zengin Durum Çubuğu:** Toplam/seçili öğe sayısı, seçili dosya boyutu ve aktif sürücünün doluluk oranı / kalan boş alanı.
+- **🪟 Varsayılan Dosya Yöneticisi & Win + E Entegrasyonu:** Araçlar > Seçenekler > Genel menüsünden tek tıkla varsayılan dosya yöneticisi yapabilir ve Win + E kısayolunu devralabilir.
+- **🎨 Modern Windows 11 / Fluent Tasarım & Tam Kapsamlı Koyu Tema:** Üst araç çubuğundan 🌙 Koyu / ☀️ Açık arasında anında geçiş yapabilirsiniz.
+- **🏷️ Otomatik Sekme Renklendirme (Tab Color Plus):** Klasör türüne göre sekmeleri otomatik olarak renklendirir.
+- **👁️ Tam Boy Hızlı Önizleme & Anında Filtreleme:** Sağ kenar çubuğunda dosya önizlemesi; üst bardaki Filtre kutusu ile anında süzme.
+- **⚡ Üretkenlik Araçları:** Çift Panel (F6), Excel Tablo Kopyala (Ctrl + Shift + C), Tarihli Klasör, PowerShell Entegrasyonu, Zengin Durum Çubuğu.
 
-### 🚀 Kurulum ve Kullanım
+### 🚀 Hızlı Başlangıç (Portable)
 
-Kurulum gerektirmez (Portable). Klasör içerisindeki **`mEXplorer.exe`** dosyasını çalıştırmanız yeterlidir.
-Güncellemeleri kontrol etmek için **`Yardım > Güncellemeleri kontrol et`** menüsünü kullanabilirsiniz; doğrudan [mkoles39/mEXplorer](https://github.com/mkoles39/mEXplorer/releases) GitHub deponuzu kontrol eder.
+Kurulum gerektirmez. En son .zip dosyasını [Releases](https://github.com/mkoles39/mEXplorer/releases) sayfasından indirin, çıkartın ve **mEXplorer.exe**'yi çalıştırın.
 
----
+### 📸 Ekran Görüntüleri
 
-## 📦 Releases / Sürüm Yayınlama
+Koyu Tema, Çift Panel ve Önizleme Paneli görüntüleri buraya eklenecek.
 
-The updater downloads the first `.zip` asset of the latest GitHub release and reads the version from its file name, so name it by date: `mEXplorerYYMMDD.zip` (e.g. `mEXplorer261110.zip`).
+### 📦 Sürüm Yayınlama
 
-Güncelleyici, en son GitHub sürümündeki ilk `.zip` dosyasını indirir ve sürümü dosya adından okur; dosyayı tarihle adlandırın: `mEXplorerYYAAGG.zip` (örn. `mEXplorer261110.zip`).
+Güncelleyici, GitHub releases'deki ilk .zip dosyasını indirir. Dosyayı tarihle adlandırın: mEXplorerYYAAGG.zip (örn. mEXplorer261110.zip).
 
----
+### 🙏 Teşekkür
 
-## 🙏 Credits / Teşekkür
+mEXplorer, [Tablacus Explorer](https://github.com/tablacus/TablacusExplorer) (Gaku, MIT Lisansı) üzerine kuruludur.
 
-mEXplorer is based on [Tablacus Explorer](https://github.com/tablacus/TablacusExplorer) by Gaku (MIT License).
+### 📄 Lisans
 
-mEXplorer, Gaku tarafından geliştirilen [Tablacus Explorer](https://github.com/tablacus/TablacusExplorer) (MIT Lisansı) üzerine kuruludur.
-
----
-
-## 📄 License / Lisans
-
-MIT License — see [LICENSE](LICENSE).
+MIT Lisansı — [LICENSE](LICENSE) dosyasına bakın.
