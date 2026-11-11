@@ -1,6 +1,7 @@
 # User session history & local window state
 config/remember.xml
 config/closedtabs.xml
+config/window.xml
 config/window1.xml
 config/*.bak
 *.old
@@ -11,3 +12,19 @@ config/tabcolorplus.tsv
 # Local copies of mEXplorer.exe
 TE32.exe
 TE64.exe
+
+# IDE / editor settings
+.vscode/
+.idea/
+*.code-workspace
+*.suo
+*.user
+
+# OS generated files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Logs
+*.log
+logs/

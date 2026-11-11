@@ -24,7 +24,7 @@
 	<text s="Close tabs on left">Soldaki sekmeleri kapat</text>
 	<text s="Close tabs on right">Sağdaki sekmeleri kapat</text>
 	<text s="&amp;New tab">&amp;Yeni sekme</text>
-	<text s="Switch &amp;Explorer engine">&amp;Explorer mtorunu değiştir</text>
+	<text s="Switch &amp;Explorer engine">&amp;Explorer motorunu değiştir</text>
 	<text s="Open in E&amp;xplorer">E&amp;xplorer ile aç</text>
 	<text s="General">Genel</text>
 	<text s="Tabs">Sekmeler</text>
@@ -34,14 +34,14 @@
 	<text s="Default">Varsayılan</text>
 	<text s="Key">Klavye</text>
 	<text s="Mouse">Fare</text>
-	<text s="Init">İçinde</text>
+	<text s="Init">Başlatma</text>
 	<text s="OK">Tamam</text>
 	<text s="Cancel">Vazgeç</text>
 	<text s="Style">Stil</text>
 	<text s="Type">Tip</text>
 	<text s="Align">Hizalama</text>
 	<text s="Size">Boyut</text>
-	<text s="Position">Pozisyonn</text>
+	<text s="Position">Pozisyon</text>
 	<text s="Root">Kök</text>
 
 	<text s="Left">Sol</text>
@@ -202,7 +202,7 @@
 	<text s="Get %s...">Al %s...</text>
 	<text s="Results">Sonuçlar</text>
 	<text s="Number of items">öğe sayısı</text>
-	<text s="&amp;About %s">%s,</text>
+	<text s="&amp;About %s">Hakkında %s</text>
 	<text s="Get">Almak</text>
 	<text s="Drag-and-Drop">Sürükle bırak</text>
 	<text s="Swap">Takas</text>

@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Verify project structure
+        run: |
+          if (-not (Test-Path 'mEXplorer.exe')) { Write-Error 'mEXplorer.exe not found'; exit 1 }
+          if (-not (Test-Path 'lib/te32.dll')) { Write-Error 'lib/te32.dll not found'; exit 1 }
+          if (-not (Test-Path 'lib/te64.dll')) { Write-Error 'lib/te64.dll not found'; exit 1 }
+          Write-Host 'Project structure verified successfully.'
+
+      - name: Check for invalid hex constants
+        run: |
+          $matches = Select-String -Path 'script/consts.js' -Pattern 'Ox[0-9A-Fa-f]+'
+          if ($matches) {
+            Write-Error "Invalid hex constant 'Ox...' found in consts.js. Use '0x...' instead."
+            $matches | ForEach-Object { Write-Host $_.Line }
+            exit 1
+          }
+          Write-Host 'No invalid hex constants found.'
